@@ -1,0 +1,11 @@
+#!/bin/bash
+
+if [[ $# -eq 0 ]]; then
+  echo "Usage: $0 <prefix>"
+  exit 1
+fi
+
+PREFIX="$1"
+
+tmux list-sessions | grep "^$PREFIX" | cut -d: -f1 | xargs -I {} tmux kill-session -t {}
+tmux list-sessions

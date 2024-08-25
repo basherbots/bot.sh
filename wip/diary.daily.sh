@@ -32,12 +32,12 @@ if [[ -z "$FILE_TO_OPEN" ]]; then
 fi
 
 # Generate a unique session name with a timestamp
-SESSION_NAME="dailies_$(date +%s)"
+SESSION_NAME="basherbot_dailies_$(date +%s)"
 
 # Start tmux with the unique session name and send commands within the session
 tmux new-session -d -s "$SESSION_NAME" \; \
-  split-window -h \; \
   split-window -v \; \
+  split-window -h \; \
   send-keys -t 0 "cd $DAILIES_FOLDER" C-m \; \
   send-keys -t 1 "$EDITOR $FILE_TO_OPEN" C-m \; \
   select-pane -t 0 \; \

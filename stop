@@ -1,11 +1,18 @@
 #!/bin/bash
 
 if [[ $# -eq 0 ]]; then
-  echo "Usage: $0 <prefix>"
+  echo "Usage: $0 [-a] [prefix]"
   exit 1
 fi
 
-PREFIX="$1"
+if [[ "$1" == "-a" ]]; then
+  PREFIX="basherbot_"
+elif [[ $# -eq 1 ]]; then
+  PREFIX="$1"
+else
+  echo "Invalid arguments. Use -a to clear all sessions with prefix 'basherbot_' or provide a specific prefix."
+  exit 1
+fi
 
 tmux list-sessions | grep "^$PREFIX" | cut -d: -f1 | xargs -I {} tmux kill-session -t {}
 tmux list-sessions

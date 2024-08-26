@@ -1,0 +1,47 @@
+#!/bin/bash
+
+# Simple script to monitor a directory for changes (new, modified, or deleted files)
+
+# Usage: ./script.sh <glob_pattern>
+
+if [ $# -eq 0 ]; then
+    echo "Usage: $0 <glob_pattern>"
+    exit 1
+fi
+
+glob_pattern="$1"
+
+# Record the start time
+start_time=$(date +%s)
+
+# Get the initial list of files
+initial_files=($(find "$glob_pattern" -type f))
+
+while true; do
+    # Find new or modified files (modified after the start time)
+    new_or_modified_files=($(find "$glob_pattern" -type f -newermt "@$start_time"))
+
+    # Get the current list of files
+    current_files=($(find "$glob_pattern" -type f))
+
+    # Find deleted files (present in initial_files but not in current_files)
+    deleted_files=()
+    for file in "${initial_files[@]}"; do
+        if [[ ! " ${current_files[*]} " =~ " ${file} " ]]; then
+            deleted_files+=("$file")
+        fi
+    done
+
+    # If there are any changes, print the filenames and exit
+    if [ "${#deleted_files[@]}" -gt 0 ] || [ "${#new_or_modified_files[@]}" -gt 0 ]; then
+        for file in "${deleted_files[@]}"; do
+            echo "$file" 
+        done
+        for file in "${new_or_modified_files[@]}"; do
+            echo "$file" 
+        done
+        break
+    fi
+
+    sleep 1
+done
